@@ -1,6 +1,18 @@
 .content-top{
-    @mixin sprite-image($content-bot__bg) {
-      $sprite-image: nth($sprite, 9);
-      background-image: url(#{$sprite-image});
+    background-image: url(img/sprite.jpg);
+    background-position: 0px -409px;
+    min-height: 395px;
+    width: 100%;
+    padding: 42px 48px;
+    color: #fff;
+    flex-direction: column;
+    &__title{
+        font-size: 24px;
+        margin-top: 45px;
+    }
+    &__text{
+        margin-top: 15px;
+        line-height: 24px;
+        max-width: 450px;
     }
 }

@@ -24,7 +24,7 @@ var src = {
 
 // Компиляция Sass файлов в файл style.css
 gulp.task('sass', function () {
-  return gulp.src(['./src/**/*.scss', './src/img/sprite-jpg.scss'])
+  return gulp.src('./src/**/*.scss')
     .pipe(sass({outputStyle: 'normal'}).on('error', sass.logError))
     .pipe(autoprefixer({
             browsers: ['last 2 versions', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'],
@@ -42,6 +42,7 @@ gulp.task('scripts', function() {
         gulp.src('./src/js/snap.svg.js'),
         gulp.src('./src/js/svg-animation.js')
     )
+    .pipe(uglify())
     .pipe(concat('bundle.js'))
     .pipe(gulp.dest('./dist/js/'))
 });
@@ -53,8 +54,8 @@ gulp.task('svg-sprites', function () {
         	mode: "symbols",
             preview: false
         }))
-        .pipe(concat('svg.php'))
-        .pipe(gulp.dest("./dist/img/sprites"));
+        .pipe(concat('sprite.svg'))
+        .pipe(gulp.dest("./dist/img"));
 });
 
 //jade компилятор
@@ -69,7 +70,7 @@ gulp.task('jade', function() {
 gulp.task('sprite-png', function () {
   var spriteData = gulp.src('./src/blocks/**/*.png').pipe(spritesmith({
     imgName: 'sprite.png',
-    cssName: 'sprite-png.scss'
+    cssName: 'sprite-png.css'
   }));
   return spriteData.pipe(gulp.dest('./src/img'));
 });
@@ -77,7 +78,7 @@ gulp.task('sprite-png', function () {
 gulp.task('sprite-jpg', function () {
   var spriteData = gulp.src(['./src/blocks/**/*.jpg','./src/blocks/**/*.jpeg']).pipe(spritesmith({
     imgName: 'sprite.jpg',
-    cssName: 'sprite-jpg.scss',
+    cssName: 'sprite-jpg.css',
     imgOpts: {quality: 95}
   }));
   return spriteData.pipe(gulp.dest('./src/img'));
@@ -118,26 +119,6 @@ gulp.task('server', ['sass', 'scripts', 'watch', 'svg-sprites', 'jade', 'sprite-
     gulp.watch(src.scss, ['sass']);
     gulp.watch(src.html).on('change', reload);
 });
-
-//сжатие всех js файлов для запуска в продакшн, не добавлено в dev, потому-что занимает значительное время
-gulp.task('js-prod', function() {
-  return streamqueue({ objectMode: true },
-        gulp.src('./src/js/jquery-3.2.1.js'),
-        gulp.src('./src/js/snap.svg.js'),
-        gulp.src('./src/js/svg-animation.js')
-    )
-  	.pipe(uglify())
-    .pipe(concat('all.js'))
-    .pipe(gulp.dest('./js/'));
-});
-
-//сжатие всех css файлов для запуска в продакшн, не добавлено в dev, потому-что занимает значительное время
-// gulp.task('css-prod', function () {
-//      return gulp.src(["./dist/**/*.css", "!./dist/css/bundle.css"])
-//         .pipe(csso())
-//         .pipe(concat('bundle.css'))
-//         .pipe(gulp.dest('./css/'));
-// });
 
 gulp.task('bem', function () {
      if (argv.create) {
