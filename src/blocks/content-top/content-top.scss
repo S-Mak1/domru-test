@@ -1,0 +1,6 @@
+.content-top{
+    @mixin sprite-image($content-bot__bg) {
+      $sprite-image: nth($sprite, 9);
+      background-image: url(#{$sprite-image});
+    }
+}

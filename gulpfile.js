@@ -12,6 +12,7 @@ var reload = browserSync.reload;
 var argv = require('yargs').argv;
 var shell = require('gulp-shell')
 var jade = require('gulp-jade');
+var spritesmith = require('gulp.spritesmith');
 
 
 var src = {
@@ -23,21 +24,15 @@ var src = {
 
 // Компиляция Sass файлов в файл style.css
 gulp.task('sass', function () {
-  return gulp.src('./src/**/*.scss')
+  return gulp.src(['./src/**/*.scss', './src/img/sprite-jpg.scss'])
     .pipe(sass({outputStyle: 'normal'}).on('error', sass.logError))
     .pipe(autoprefixer({
             browsers: ['last 2 versions', 'safari 5', 'ie 8', 'ie 9', 'opera 12.1', 'ios 6', 'android 4'],
             cascade: false
         }))
-    .pipe(gulp.dest('./dist'))
-});
-
-//сборка всех файлов в единый bunlde.css
-gulp.task('css-build', function() {
-  return gulp.src(["./dist/**/*.css", "!./dist/css/bundle.css"])
+    .pipe(csso())
     .pipe(concat('bundle.css'))
-    .pipe(gulp.dest('./dist/'))
-    .pipe(reload({stream: true}));
+    .pipe(gulp.dest('./dist'))
 });
 
 //сборка всех файлов из jslib в единый all.js
@@ -62,6 +57,7 @@ gulp.task('svg-sprites', function () {
         .pipe(gulp.dest("./dist/img/sprites"));
 });
 
+//jade компилятор
 gulp.task('jade', function() {
 
   return gulp.src('./src/**/*.jade')
@@ -69,20 +65,50 @@ gulp.task('jade', function() {
   .pipe(gulp.dest('./dist/'))
 });
 
-//gulp wath - функция которая смотрит за изменениями всех используемых в проекте фейлов и если какой-либо файл был изменен, то перезапускает необходимую gulp задачу для сборки этого файла
-gulp.task('watch',['sass', 'scripts', 'css-build'], function() {
+//сборка png спрайта
+gulp.task('sprite-png', function () {
+  var spriteData = gulp.src('./src/blocks/**/*.png').pipe(spritesmith({
+    imgName: 'sprite.png',
+    cssName: 'sprite-png.scss'
+  }));
+  return spriteData.pipe(gulp.dest('./src/img'));
+});
+
+gulp.task('sprite-jpg', function () {
+  var spriteData = gulp.src(['./src/blocks/**/*.jpg','./src/blocks/**/*.jpeg']).pipe(spritesmith({
+    imgName: 'sprite.jpg',
+    cssName: 'sprite-jpg.scss',
+    imgOpts: {quality: 95}
+  }));
+  return spriteData.pipe(gulp.dest('./src/img'));
+});
+
+gulp.task('font-transfer', function () {
+  return gulp.src('./src/fonts/**/*.*')
+  .pipe(gulp.dest('./dist/fonts'))
+});
+
+gulp.task('img-transfer', function () {
+  return gulp.src(['./src/img/*.jpg', './src/img/*.jpeg', './src/img/*.png', './src/img/*.gif'])
+  .pipe(gulp.dest('./dist/img'))
+});
+
+
+
+//gulp wath - функция которая смотрит за изменениями всех используемых в проекте файлов и если какой-либо файл был изменен, то перезапускает необходимую gulp задачу для сборки этого файла
+gulp.task('watch',['sass', 'scripts', 'jade'], function() {
  gulp.watch('./src/**/*.scss', ['sass']);
-  gulp.watch('./src/**/*.html');
    gulp.watch('./src/js/**/*.js', ['scripts']);
-    gulp.watch('./dist/blocks/css/**/*.css', ['css-build']);
-     gulp.watch('./src/img/*.svg', ['svg-sprites']);
-      gulp.watch('./src/**/*.jade', ['jade']);
+    gulp.watch('./src/img/*.svg', ['svg-sprites']);
+     gulp.watch('./src/**/*.jade', ['jade']);
+      gulp.watch('./src/blocks/**/*.png', ['sprite-png']);
+       gulp.watch('./src/blocks/**/*.jpg', ['sprite-jpg']);
 
 });
 
 // сервер browser-sync
 
-gulp.task('server', ['sass', 'scripts', 'css-build', 'watch', 'svg-sprites', 'jade'], function() {
+gulp.task('server', ['sass', 'scripts', 'watch', 'svg-sprites', 'jade', 'sprite-png', 'sprite-jpg', 'font-transfer', 'img-transfer'], function() {
 
     browserSync.init({
         proxy:'localhost/snapjs',
@@ -106,12 +132,12 @@ gulp.task('js-prod', function() {
 });
 
 //сжатие всех css файлов для запуска в продакшн, не добавлено в dev, потому-что занимает значительное время
-gulp.task('css-prod', function () {
-     return gulp.src(["./dist/**/*.css", "!./dist/css/bundle.css"])
-        .pipe(csso())
-        .pipe(concat('bundle.css'))
-        .pipe(gulp.dest('./css/'));
-});
+// gulp.task('css-prod', function () {
+//      return gulp.src(["./dist/**/*.css", "!./dist/css/bundle.css"])
+//         .pipe(csso())
+//         .pipe(concat('bundle.css'))
+//         .pipe(gulp.dest('./css/'));
+// });
 
 gulp.task('bem', function () {
      if (argv.create) {
@@ -133,8 +159,8 @@ gulp.task('bem', function () {
     }
 });
 
-gulp.task('dev', ['sass', 'scripts', 'css-build', 'watch', 'svg-sprites', 'jade']);
+gulp.task('dev', ['sass', 'scripts', 'watch', 'svg-sprites', 'jade', 'sprite-png', 'sprite-jpg', 'font-transfer', 'img-transfer']);
 
-gulp.task('build', ['sass', 'js-prod', 'css-prod', 'svg-sprites', 'jade' ]);
+gulp.task('build', ['sass', 'js-prod', 'svg-sprites', 'jade', 'sprite-png', 'sprite-jpg', 'font-transfer', 'img-transfer']);
 
 gulp.task('default', ['dev']);
