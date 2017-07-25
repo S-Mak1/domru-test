@@ -1,0 +1,46 @@
+{
+  "name": "eazy-start",
+  "version": "0.0.1",
+  "description": "none",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/SMak/smak.git"
+  },
+  "author": "Vyacheslav Makushin (s-mak.su)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/SMak/smak/issues"
+  },
+  "homepage": "https://gitlab.com/SMak/smak#README",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-csso": "^3.0.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-shell": "^0.6.3",
+    "gulp-svg-sprites": "^4.1.1",
+    "gulp-uglify": "^2.1.2",
+    "gulp-uglifyjs": "^0.6.2",
+    "gulp-watch": "^4.3.11",
+    "streamqueue": "^1.1.1"
+  },
+  "dependencies": {
+    "browser-sync": "^2.18.13",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-csso": "^3.0.0",
+    "gulp-jade": "^1.1.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-svg-sprites": "^4.1.1",
+    "gulp-uglify": "^2.1.2",
+    "gulp-uglifyjs": "^0.6.2",
+    "gulp-watch": "^4.3.11",
+    "streamqueue": "^1.1.1"
+  }
+}
