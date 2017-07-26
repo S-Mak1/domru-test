@@ -1,0 +1,20 @@
+.footer{
+    padding: 40px;
+    background: #151515;
+    width: 100%;
+    color: #fff;
+    font-family: 'FedraSansPro-Light';
+    justify-content: space-between;
+    &__left{
+        flex-direction: column;
+    }
+    span{
+        opacity: 0.6;
+        margin-top: 5px;
+    }
+    a{
+        color: #fff;
+        text-decoration: none;
+        border-bottom: 1px dotted #fff;
+    }
+}

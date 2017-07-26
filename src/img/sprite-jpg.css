@@ -24,7 +24,7 @@ To change `display` (e.g. `display: inline-block;`), we suggest using a common C
 }
 .icon-content-top__bg {
   background-image: url(sprite.jpg);
-  background-position: 0px -409px;
+  background-position: -937px 0px;
   width: 937px;
   height: 394px;
 }

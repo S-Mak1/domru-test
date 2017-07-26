@@ -1,0 +1,27 @@
+.content-mid{
+    width: 100%;
+    padding: 40px;
+    &__title{
+        font-size: 24px;
+        margin-bottom: 34px;
+        line-height: 32px;
+    }
+    flex-direction: column;
+    .content-col{
+        justify-content: space-between;
+        width:100%;
+        padding-bottom: 50px;
+        &__item{
+            width: 260px
+        }
+        &__img{
+            width: 45px;
+            height: 45px;
+        }
+        &__text{
+            font-size: 14px;
+            line-height: 22px;
+            opacity: 0.6;
+        }
+    }
+}

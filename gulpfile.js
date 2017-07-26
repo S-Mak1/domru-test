@@ -1,18 +1,19 @@
-var gulp = require('gulp');
-var sass = require('gulp-sass');
-var autoprefixer = require('gulp-autoprefixer');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglifyjs');
-var watch = require('gulp-watch');
-var csso = require('gulp-csso');
-var streamqueue  = require('streamqueue');
-var svgSprite = require("gulp-svg-sprites");
-var browserSync = require('browser-sync').create();
-var reload = browserSync.reload;
-var argv = require('yargs').argv;
-var shell = require('gulp-shell')
-var jade = require('gulp-jade');
-var spritesmith = require('gulp.spritesmith');
+var gulp = require('gulp'),
+    sass = require('gulp-sass'),
+    autoprefixer = require('gulp-autoprefixer'),
+    concat = require('gulp-concat'),
+    uglify = require('gulp-uglifyjs'),
+    watch = require('gulp-watch'),
+    csso = require('gulp-csso'),
+    streamqueue  = require('streamqueue'),
+    svgSprite = require("gulp-svg-sprites"),
+    browserSync = require('browser-sync').create(),
+    reload = browserSync.reload,
+    argv = require('yargs').argv,
+    shell = require('gulp-shell'),
+    jade = require('gulp-jade'),
+    svgo = require('gulp-svgo'),
+    spritesmith = require('gulp.spritesmith');
 
 
 var src = {
@@ -38,9 +39,7 @@ gulp.task('sass', function () {
 //сборка всех файлов из jslib в единый all.js
 gulp.task('scripts', function() {
   return streamqueue({ objectMode: true },
-        gulp.src('./src/js/jquery-3.2.1.js'),
-        gulp.src('./src/js/snap.svg.js'),
-        gulp.src('./src/js/svg-animation.js')
+        gulp.src('./src/js/*.js')
     )
     .pipe(uglify())
     .pipe(concat('bundle.js'))
@@ -49,12 +48,13 @@ gulp.task('scripts', function() {
 
 //сборка SVG спрайта
 gulp.task('svg-sprites', function () {
-    return gulp.src('./src/blocks/**/img/*.svg')
+    return gulp.src(['./src/blocks/**/*.svg', './src/img/**/*.svg'])
         .pipe(svgSprite({
         	mode: "symbols",
             preview: false
         }))
         .pipe(concat('sprite.svg'))
+        //.pipe(svgo())
         .pipe(gulp.dest("./dist/img"));
 });
 
@@ -70,7 +70,9 @@ gulp.task('jade', function() {
 gulp.task('sprite-png', function () {
   var spriteData = gulp.src('./src/blocks/**/*.png').pipe(spritesmith({
     imgName: 'sprite.png',
-    cssName: 'sprite-png.css'
+    cssName: 'sprite-png.css',
+    imgOpts: {quality: 95},
+    algorithm: 'left-right'
   }));
   return spriteData.pipe(gulp.dest('./src/img'));
 });
@@ -79,7 +81,8 @@ gulp.task('sprite-jpg', function () {
   var spriteData = gulp.src(['./src/blocks/**/*.jpg','./src/blocks/**/*.jpeg']).pipe(spritesmith({
     imgName: 'sprite.jpg',
     cssName: 'sprite-jpg.css',
-    imgOpts: {quality: 95}
+    imgOpts: {quality: 95},
+    algorithm: 'left-right'
   }));
   return spriteData.pipe(gulp.dest('./src/img'));
 });
